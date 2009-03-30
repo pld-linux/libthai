@@ -1,14 +1,14 @@
 Summary:	LibThai - Thai language support routines
 Summary(pl.UTF-8):	LibThai - biblioteka wspomagająca obsługę języka tajskiego
 Name:		libthai
-Version:	0.1.9
+Version:	0.1.10
 Release:	1
 License:	LGPL v2.1
 Group:		Libraries
 Source0:	http://linux.thai.net/pub/thailinux/software/libthai/%{name}-%{version}.tar.gz
-# Source0-md5:	7002d111b293f202d20b28aa2b4ed68f
+# Source0-md5:	ac22e075447f9e4f9903277a590f7285
 URL:		http://linux.thai.net/projects/libthai
-BuildRequires:	libdatrie-devel
+BuildRequires:	libdatrie-devel >= 0.2
 BuildRequires:	pkgconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -67,6 +67,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/libthai
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -77,6 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README TODO
 %attr(755,root,root) %{_libdir}/libthai.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libthai.so.0
 %{_datadir}/libthai
 
 %files devel
@@ -85,7 +88,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libthai.la
 %{_includedir}/thai
 %{_pkgconfigdir}/libthai.pc
-%{_mandir}/man3/*.3*
+%{_mandir}/man3/TAC*.3*
+%{_mandir}/man3/th_*.3*
+%{_mandir}/man3/th*.h.3*
+%{_mandir}/man3/wtt.h.3*
 
 %files static
 %defattr(644,root,root,755)
