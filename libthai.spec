@@ -1,12 +1,12 @@
 Summary:	LibThai - Thai language support routines
 Summary(pl.UTF-8):	LibThai - biblioteka wspomagająca obsługę języka tajskiego
 Name:		libthai
-Version:	0.1.26
+Version:	0.1.27
 Release:	1
 License:	LGPL v2.1
 Group:		Libraries
 Source0:	https://linux.thai.net/pub/thailinux/software/libthai/%{name}-%{version}.tar.xz
-# Source0-md5:	e79403961d538b56fc4af7670643844c
+# Source0-md5:	2f851d6bc940080e1af1d38504d4f564
 URL:		https://linux.thai.net/projects/libthai
 BuildRequires:	doxygen >= 1:1.8.8
 BuildRequires:	libdatrie-devel >= 0.2
