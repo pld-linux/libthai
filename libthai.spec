@@ -1,16 +1,27 @@
+#
+# Conditional build:
+%bcond_without	apidocs		# API documentation
+%bcond_without	static_libs	# static library
+
 Summary:	LibThai - Thai language support routines
 Summary(pl.UTF-8):	LibThai - biblioteka wspomagająca obsługę języka tajskiego
 Name:		libthai
-Version:	0.1.29
+Version:	0.1.30
 Release:	1
 License:	LGPL v2.1
 Group:		Libraries
 Source0:	https://linux.thai.net/pub/thailinux/software/libthai/%{name}-%{version}.tar.xz
-# Source0-md5:	c1fe8255d2bdfc5ea4f68dd9aff8b7f1
+# Source0-md5:	3090d537da8c77749b8de7e968204264
+# drop when doxygen 1.15.0 becomes available in PLD
+Patch0:		%{name}-doxygen-downgrade.patch
 URL:		https://linux.thai.net/projects/libthai
+BuildRequires:	autoconf >= 2.71
+BuildRequires:	automake >= 1:1.11.2
 BuildRequires:	doxygen >= 1:1.8.8
 BuildRequires:	libdatrie-devel >= 0.2
+BuildRequires:	libtool >= 2:2
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -57,11 +68,30 @@ Static LibThai library.
 %description static -l pl.UTF-8
 Statyczna biblioteka LibThai.
 
+%package apidocs
+Summary:	API documentation for LibThai library
+Summary(pl.UTF-8):	Dokumentacja API biblioteki LibThai
+Group:		Documentation
+BuildArch:	noarch
+
+%description apidocs
+API documentation for LibThai library.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API biblioteki LibThai.
+
 %prep
 %setup -q
+%patch -P0 -p1
 
 %build
-%configure
+%{__libtoolize}
+%{__aclocal} -I m4
+%{__autoconf}
+%{__automake}
+%configure \
+	%{!?with_apidocs:--disable-doxygen-doc} \
+	%{!?with_static_libs:--disable-static}
 %{__make}
 
 %install
@@ -72,8 +102,10 @@ rm -rf $RPM_BUILD_ROOT
 
 # obsoleted by pkg-config
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libthai.la
+%if %{with apidocs}
 # packaged as %doc
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/libthai
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -84,17 +116,24 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README
-%attr(755,root,root) %{_libdir}/libthai.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libthai.so.0
+%{_libdir}/libthai.so.*.*.*
+%ghost %{_libdir}/libthai.so.0
 %{_datadir}/libthai
 
 %files devel
 %defattr(644,root,root,755)
-%doc doc/html/*
-%attr(755,root,root) %{_libdir}/libthai.so
+%{_libdir}/libthai.so
 %{_includedir}/thai
 %{_pkgconfigdir}/libthai.pc
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libthai.a
+%endif
+
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%doc doc/html/*
+%endif
